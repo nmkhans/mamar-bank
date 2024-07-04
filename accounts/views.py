@@ -1,9 +1,9 @@
-from django.shortcuts import redirect
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from .forms import UserRegisterForm
+from .forms import UserRegisterForm, UserProfileUpdateForm
 from django.contrib.auth import login, logout
 from django.views.generic import FormView, View
-from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth.views import LoginView
 
 # Create your views here.
 class UserRegisterView(FormView):
@@ -25,3 +25,23 @@ class UserLoginView(LoginView):
 def user_logout(req):
   logout(req)
   return redirect('home')
+
+class UserProfileView(View):
+  template_name = 'accounts/user_profile.html'
+
+  def get(self, request):
+    form = UserProfileUpdateForm(instance = request.user)
+    return render(request, self.template_name, {
+      'form': form
+    })
+  
+  def post(self, request):
+    form = UserProfileUpdateForm(request.POST, instance = request.user)
+
+    if form.is_valid():
+      form.save()
+      return redirect('user-profile')
+    
+    return render(request, self.template_name, {
+      'form': form
+    })
