@@ -9,6 +9,23 @@ from .forms import DepositForm, WithDrawForm, LoanRequestForm
 from django.contrib import messages
 from datetime import datetime
 from django.db.models import Sum
+from django.core.mail import EmailMessage, EmailMultiAlternatives
+from django.template.loader import render_to_string
+
+def send_mail_to_user(subject, user, amount, template):
+  message = render_to_string(template, {
+    'user': user,
+    'amount': amount
+  })
+
+  send_mail = EmailMultiAlternatives(
+    subject,
+    '',
+    to = [user.email]
+  )
+  send_mail.attach_alternative(message, 'text/html')
+
+  send_mail.send()
 
 
 class TransactionCreateMixin(LoginRequiredMixin, CreateView):
@@ -41,13 +58,19 @@ class DepositMoneyView(TransactionCreateMixin):
     return initial
   
   def form_valid(self, form):
-    print('hi')
     amount = form.cleaned_data['amount']
     account = self.request.user.account
     account.balance += amount
 
     account.save(
       update_fields = ['balance']
+    )
+
+    send_mail_to_user(
+      "Deposit message",
+      self.request.user,
+      amount,
+      'transactions/deposit_email.html'
     )
 
     messages.success(self.request, f'{amount} was deposited to your account successfully.')
@@ -69,6 +92,13 @@ class WithdrawMoneyView(TransactionCreateMixin):
     
     account.save(
       update_fields = ['balance']
+    )
+
+    send_mail_to_user(
+      "Withdraw message",
+      self.request.user,
+      amount,
+      'transactions/withdraw_email.html'
     )
 
     messages.success(self.request, f'{amount} was withdrawn from your account successfully.')
@@ -94,6 +124,13 @@ class LoanRequestView(TransactionCreateMixin):
     if current_loan_count >= 3:
       messages.warning(self.request, f'Your loan credit has exceeded! Please repay your pending loans first.')
       return
+    
+    send_mail_to_user(
+      "Loan request",
+      self.request.user,
+      amount,
+      'transactions/loan_request_email.html'
+    )
 
     messages.success(self.request, f'Requested for loan successfully. We will confirm soon')
 
