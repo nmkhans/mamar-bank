@@ -1,5 +1,6 @@
 from pathlib import Path
 import environ
+import dj_database_url
 
 env = environ.Env()
 environ.Env.read_env()
@@ -72,7 +73,7 @@ WSGI_APPLICATION = 'mamar_bank.wsgi.application'
     }
 } """
 
-DATABASES = {
+""" DATABASES = {
    'default': {
        'ENGINE': 'django.db.backends.postgresql',
        'NAME': env('DB_NAME'),
@@ -81,6 +82,12 @@ DATABASES = {
        'HOST': env('DB_HOST'),
        'PORT': env('DB_PORT'),
    }
+} """
+
+DATABASES = {
+    'default': dj_database_url.config(
+        default='postgresql://nmk_mamar_bank_user:Vn3eEaZZ0sRaBArAGCvMMSao6DJVLZgo@dpg-cq4ocvmehbks73bf3360-a.oregon-postgres.render.com/nmk_mamar_bank'
+    )
 }
 
 
