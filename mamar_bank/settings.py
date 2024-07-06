@@ -14,7 +14,8 @@ SECRET_KEY = 'django-insecure-insccomp4bakkskw^)fm5#2xaq6)pd5=*jcc1)q$kgcg+ofuua
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['nmk-mamar-bank.onrender.com']
+ALLOWED_HOSTS = ['*']
+CSRF_TRUSTED_ORIGINS = ["https://nmk-mamar-bank.onrender.com"]
 
 
 # Application definition
