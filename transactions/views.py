@@ -243,6 +243,13 @@ class BalanceTransferView(TransactionCreateMixin):
         'transactions/balance_transfer_email.html'
       )
 
+      send_mail_to_user(
+      "Deposit message",
+      reciver_user,
+      amount,
+      'transactions/deposit_email.html'
+    )
+
       return super().form_valid(form)
     
     except User.DoesNotExist:
