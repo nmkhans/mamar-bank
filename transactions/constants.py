@@ -3,4 +3,5 @@ TRANSACTION_TYPE = [
   ('withdraw', 'Withdraw'),
   ('loan', 'Loan'),
   ('loan-paid', 'Loan paid'),
+  ('balance-transfer', 'Balance transfer'),
 ]

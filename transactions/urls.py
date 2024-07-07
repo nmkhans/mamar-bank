@@ -8,4 +8,5 @@ urlpatterns = [
   path('report/', views.TransactionReportView.as_view(), name = "transaction-report"),
   path('pay-loan/<int:loan_id>/', views.PayLoanView.as_view(), name = "pay-loan"),
   path('loan-list/', views.LoanListView.as_view(), name = "loan-list"),
+  path('transfer-balance/', views.BalanceTransferView.as_view(), name = "transfer-balance"),
 ]

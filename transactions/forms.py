@@ -1,5 +1,6 @@
 from django import forms
 from .models import Transaction
+from .constants import TRANSACTION_TYPE
 
 class TransactionForm(forms.ModelForm):
   class Meta:
@@ -59,4 +60,15 @@ class WithDrawForm(TransactionForm):
 class LoanRequestForm(TransactionForm):
   def clean_amount(self):
     amount = self.cleaned_data['amount']
+    return amount
+  
+class BalanceTransferForm(TransactionForm):
+  reciver = forms.CharField(max_length=50)
+  amount = forms.DecimalField()
+
+  def clean_amount(self):
+    amount = self.cleaned_data.get('amount')
+    if amount <= 0:
+      raise forms.ValidationError('error')
+    
     return amount
