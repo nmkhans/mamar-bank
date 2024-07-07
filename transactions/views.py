@@ -234,6 +234,15 @@ class BalanceTransferView(TransactionCreateMixin):
       reciver_user_account.save()
       user_account.save()
 
+      messages.success(self.request, 'Balance has been transfered.')
+
+      send_mail_to_user(
+        "Balance transfer",
+        self.request.user,
+        amount,
+        'transactions/balance_transfer_email.html'
+      )
+
       return super().form_valid(form)
     
     except User.DoesNotExist:

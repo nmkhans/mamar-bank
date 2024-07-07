@@ -68,7 +68,14 @@ class BalanceTransferForm(TransactionForm):
 
   def clean_amount(self):
     amount = self.cleaned_data.get('amount')
-    if amount <= 0:
-      raise forms.ValidationError('error')
+    min_amount = 100
+
+    if amount < min_amount:
+      raise forms.ValidationError(f'Amount can not be less than {min_amount}')
+    
+    if amount > self.account.balance:
+      raise forms.ValidationError(
+        f'Amount has exceeded you balance.'
+      )
     
     return amount
