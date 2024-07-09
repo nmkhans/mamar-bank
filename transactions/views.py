@@ -90,20 +90,27 @@ class WithdrawMoneyView(TransactionCreateMixin):
   def form_valid(self, form):
     amount = form.cleaned_data['amount']
     account = self.request.user.account
-    account.balance -= amount
-    
-    account.save(
-      update_fields = ['balance']
-    )
+    bank_balance = UserAccount.objects.aggregate(total_balance=Sum("balance"))[
+            "total_balance"
+    ]
 
-    send_mail_to_user(
-      "Withdraw message",
-      self.request.user,
-      amount,
-      'transactions/withdraw_email.html'
-    )
+    if bank_balance < amount:
+      messages.warning(self.request, "Bank is bankruped")
+    else:
+      account.balance -= amount
 
-    messages.success(self.request, f'{amount} was withdrawn from your account successfully.')
+      account.save(
+        update_fields = ['balance']
+      )
+
+      send_mail_to_user(
+        "Withdraw message",
+        self.request.user,
+        amount,
+        'transactions/withdraw_email.html'
+      )
+
+      messages.success(self.request, f'{amount} was withdrawn from your account successfully.')
 
     return super().form_valid(form)
   
